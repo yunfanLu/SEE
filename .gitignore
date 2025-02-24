@@ -169,3 +169,20 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+testdata/
+__pycache__/
+*.pyc
+*.pyc
+registration/__pycache__/calibration.cpython-311.pyc
+log/
+logs/
+release/
+dataset/3-ComplexLight
+dataset/CVPR24/0-Low-Light-CVPR24
+*.png
+*.pdf
+
+tools/2-paper-figure/
+tools/1-trained-model-inference/

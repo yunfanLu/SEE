@@ -1,0 +1,18 @@
+PyYAML
+torch
+absl-py
+easydict
+pudb
+opencv-python
+numpy
+timm
+expecttest
+tensorboard
+scipy
+numba
+einops
+# EvLight
+kornia
+# EvLowLight
+tb-nightly
+basicsr
