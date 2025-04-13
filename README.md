@@ -71,6 +71,10 @@ Here are some example outputs generated using our framework:
 - **High-Light Recovery** 🌞: Images processed under overexposed or bright light conditions.
 
 
+## IMU-Based Registration-Tool
+
+I released the registration tool separately to this repository - [Registration-Tool](https://github.com/yunfanLu/IMU-Registration-Tool).
+
 ---
 
 ## 📄 Citation
