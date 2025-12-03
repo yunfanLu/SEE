@@ -19,7 +19,9 @@ In our research paper, we:
 
 ## 📂 Data Availability
 The datasets supporting the results of this article are publicly available:
-- **SEE-600K Dataset**: [SEE-600K OneDrive](https://hkustgz-my.sharepoint.com/:f:/g/personal/ylu066_connect_hkust-gz_edu_cn/EkNi59p2uHJFjxyeQraiVhgBSs1GnxK4DyCUP-uZhEspCA?e=ZpwOvY)
+- **SEE-600K Dataset**:
+  - [OneDrive](https://hkustgz-my.sharepoint.com/:f:/g/personal/ylu066_connect_hkust-gz_edu_cn/EkNi59p2uHJFjxyeQraiVhgBSs1GnxK4DyCUP-uZhEspCA?e=ZpwOvY)
+  - [Huggingface](https://huggingface.co/datasets/yunfanlu/SEE-600K)
 - **SDE Dataset**: [SDE Dataset GitHub](https://github.com/EthanLiang99/EvLight)
 
 ---
