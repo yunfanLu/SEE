@@ -186,3 +186,6 @@ dataset/CVPR24/0-Low-Light-CVPR24
 
 tools/2-paper-figure/
 tools/1-trained-model-inference/
+
+*.tar
+.DS_Store

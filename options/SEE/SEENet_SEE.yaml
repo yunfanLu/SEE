@@ -1,0 +1,79 @@
+JOBS: 24
+TEST_ONLY: false
+LOG_INTERVAL: 10
+TRAIN_BATCH_SIZE: 2
+VAL_BATCH_SIZE: 2
+START_EPOCH: 0
+END_EPOCH: 20
+VAL_INTERVAL: 1
+MODEL_SANING_INTERVAL: 1
+MIX_PRECISION: true
+RESUME:
+  PATH: null
+  TYPE: null
+  SET_EPOCH: true
+LAUNCHER: ParallelLaunch
+SEED: 9527
+IS_CUDA: true
+OPTIMIZER:
+  NAME: Adam
+  LR: 0.0001
+  LR_SCHEDULER: cosine
+  end_epoch: 20
+LOSS:
+  - NAME: l1_charbonnier_loss
+    WEIGHT: 1
+  - NAME: gradient_loss
+    WEIGHT: 1
+METRICS:
+  - NAME: PSNR
+  - NAME: PSNR-Linear_N
+  - NAME: SSIM
+DATASET:
+  NAME: see_everything_everytime_dataset
+  root: dataset/3-ComplexLight/RoboticArm/
+  in_frames: 1
+  crop_h: 128
+  crop_w: 256
+  sample_step: 50
+  event_representation_config:
+    type: voxel_grid
+    channel: 64
+    scale: 5
+    to_bin: true
+  testing_mapping_type:
+    - "high-normal"
+    - "low-normal"
+  training_mapping_type:
+    - "high-normal"
+    - "low-normal"
+    - "normal-normal"
+MODEL:
+  NAME: SEENet
+  input_frames: 1
+  event_moments: 64
+  C1: 96
+  C2: 96
+  loop: 10
+  exposure_sample_num: 0
+  SEE_config:
+    position_embedding: "bayer_pattern"
+    w_xy_coords: true
+    position_embedding_type: "learning:1x1+1x1"
+    head: "original:image1x1-event1x1sigmod1x1"
+    ExposureDecoder: "Release-1"
+    exposure_embedding_type: "learning:1x1+1x1"
+    exposure_mlp_layers: 5
+    exposure_using_cascade_embedding: True
+    is_inr_normal_feature: False
+    exposure_embedding_method: "ADD"
+    sparse_encoder_config:
+      type: "swin_transformer_decoder_block"
+      depth: 4
+      heads: 8
+      windows_size: 4
+VISUALIZATION:
+  folder: ./vis
+  tag: SEENet_SDE-ae3-96-4-8-4-loss-2-epoch-20-using-cascade
+  intermediate_visualization: false
+  ONLY_VIS: false
