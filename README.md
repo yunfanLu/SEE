@@ -58,10 +58,56 @@ You can then use the code to process images using our **SEE-Net** framework and 
 
 ## 💬 Usage
 
-1. **Download the SEE-600K dataset** using the link provided above.
-2. **Preprocess the data** using the provided Python scripts to prepare the dataset for training.
-3. **Train the SEE-Net model** to adjust brightness using the provided scripts and experiment with different lighting conditions.
-4. **Adjust the brightness** of any image by setting the brightness prompt (B) to control the exposure level.
+1. **Download the SEE-600K dataset**
+   
+   Download the SEE-600K dataset using the link provided above.
+
+3. **Data preprocessing and alignment**
+   Before training, the raw data must be properly extracted and aligned.
+
+   * For data extraction, follow the step-by-step instructions in the `tools/` directory.
+   * For temporal and spatial alignment, please refer to the IMU-based registration tool:
+     [https://github.com/yunfanLu/IMU-Registration-Tool](https://github.com/yunfanLu/IMU-Registration-Tool)
+     This tool provides millisecond-level alignment between RGB frames and events.
+   * If you download the dataset from Hugging Face, the data has already been aligned and can be used directly without additional registration.
+
+4. **Train the SEE-Net model**
+   We provide two training configurations, **SEE** and **SDE**, both located in the `options/` directory.
+
+   * The full training command is already written in
+     `options/SEE/SEENet_SEE.sh`.
+   * Before running, modify the paths in the script to match your local environment (dataset path, log directory, dependencies).
+   * A typical training command is:
+
+     ```bash
+     python see/main.py \
+       --yaml_file="options/SEE/SEENet_SEE.yaml" \
+       --log_dir="./logs/SEE/SEENet_SEE/" \
+       --alsologtostderr=True
+     ```
+   * During training, the model learns to reconstruct and adjust image brightness under a wide range of lighting conditions using event guidance.
+
+5. **Brightness adjustment with exposure prompts**
+   After training, the SEE model supports continuous brightness control via an exposure (brightness) prompt **B**.
+
+   * By changing the value of **B**, the model can generate images with different exposure levels from the same input.
+   * Internally, this is implemented by sampling different exposure prompts and decoding the corresponding outputs:
+
+     ```python
+     # 3. more exposure prompt
+     exposure_prompt = torch.ones(size=(B, 1, 1, 1)) * exposure_B
+     exposure_prompt = exposure_prompt.to(images.device)
+     exposure_normal_reconstructed = self._decoding(light_inr, exposure_prompt)
+     ```
+   * In evaluation mode, increasing **B** results in brighter outputs, while decreasing **B** produces darker images.
+   * This design enables pixel-level, continuous brightness adjustment as a post-processing step, without retraining the model.
+
+6. **Notes**
+
+   * The optimal operating range of the brightness prompt is typically around **B ≈ 0.5**, which corresponds to normal exposure.
+   * Extreme values of **B** are mainly intended for analysis and visualization, rather than as target outputs.
+   * The framework is designed for brightness adjustment rather than full HDR reconstruction.
+
 
 ---
 
