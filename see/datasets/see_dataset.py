@@ -335,8 +335,9 @@ def get_see_everything_everytime_with_event_dataset_all(
     root, in_frames, crop_h, crop_w, ev_rep_cfg, testing_mapping_type, training_mapping_type, sample_step
 ):
     all_train_dataset, all_test_dataset = [], []
-    video_all_folder = join(root, "VIDEOS-ALL")
-    video_all_text = join(root, "videos_all.txt")
+    # video_all_folder = join(root, "VIDEOS-ALL")
+    # video_all_text = join(root, "videos_all.txt")
+    video_all_folder = root
 
     for group in sorted(listdir(video_all_folder)):
         group_folder = join(video_all_folder, group)

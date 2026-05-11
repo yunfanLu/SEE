@@ -14,5 +14,5 @@ einops
 # EvLight
 kornia
 # EvLowLight
-tb-nightly
-basicsr
+# tb-nightly
+# basicsr
