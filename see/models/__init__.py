@@ -2,7 +2,7 @@ from see.models.dce import DeepCurveEstimationNet
 from see.models.eift import UNetEventLigntEnhance
 from see.models.esl import ESLBackBone
 from see.models.ev_light import EventGuidedLowLightImageEnhacement
-from see.models.evlowlight import EvLowLightNet
+# from see.models.evlowlight import EvLowLightNet
 
 
 def get_model(config):
@@ -22,8 +22,8 @@ def get_model(config):
         return UNetEventLigntEnhance(
             in_channels=3, out_channels=3, event_dim=config.event_moments, feature_dim=128, H=config.H, W=config.W
         )
-    elif config.NAME == "EvLowLight":
-        return EvLowLightNet()
+    # elif config.NAME == "EvLowLight":
+    #     return EvLowLightNet()
     elif config.NAME == "SEENet":
         from see.models.see_net import SEENet
 
