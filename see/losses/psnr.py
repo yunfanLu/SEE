@@ -31,7 +31,12 @@ class NormalizedPSNR(nn.Module):
         # x: prediction
         # y: ground truth
         if self.normalize_type == "linear":
-            x_ = x * y.mean() / x.mean()
+            x_mean = x.mean()
+            y_mean = y.mean()
+            if torch.abs(x_mean) < 1e-8:
+                x_ = x
+            else:
+                x_ = x * y_mean / x_mean
         else:  # self.normalize_type == "gamma":
             gamma = search_gamma_to_match_mean(x, y)
             x_ = torch.pow(x, gamma)
