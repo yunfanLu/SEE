@@ -21,16 +21,17 @@ echo "              : $(which python)"
 echo "CUDA version: $(nvcc --version)"
 nvidia-smi
 
-python see/main.py \
-  --yaml_file="options/SEE/eSl_SEE-v1.yaml" \
-  --log_dir="./logs/SSEE/eSl_SEE-v1/" \
-  --alsologtostderr=True
+# python see/main.py \
+#   --yaml_file="options/SEE/eSl_SEE-v1.yaml" \
+#   --log_dir="./logs/SSEE/eSl_SEE-v1/" \
+#   --alsologtostderr=True
 
 # Test
-# python see/main.py \
-  # --yaml_file=<YAML> \
-  # --log_dir=<LOG> \
-  # --alsologtostderr=True  \
-  # --RESUME_PATH=<PRETRAIN_MODEL> \
-  # --TEST_ONLY=True \
-  # --VISUALIZE=True
+python see/main.py \
+  --yaml_file="/root/projects/SEE/options/SEE/eSl_SEE-v1.yaml" \
+  --log_dir="/root/autodl-tmp/models/eSl_SEE/eval_0513" \
+  --alsologtostderr=True  \
+  --RESUME_PATH="/root/autodl-tmp/models/eSl_SEE/checkpoint.pth.tar" \
+  --TEST_ONLY=True \
+  --VISUALIZE=True \
+  --VAL_BATCH_SIZE=1

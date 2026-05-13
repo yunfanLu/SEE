@@ -26,16 +26,17 @@ export CUDA_VISIBLE_DEVICES="0"
 export PYTHONPATH="./3rdparty/":$PYTHONPATH
 export PYTHONPATH="./":$PYTHONPATH
 
-python see/main.py \
-  --yaml_file="options/SEE/EIFT_AAAI_SEE-v1.yaml" \
-  --log_dir="./logs/SEE/EIFT_AAAI_SEE-v1/" \
-  --alsologtostderr=True 
+# python see/main.py \
+#   --yaml_file="options/SEE/EIFT_AAAI_SEE-v1.yaml" \
+#   --log_dir="./logs/SEE/EIFT_AAAI_SEE-v1/" \
+#   --alsologtostderr=True 
 
 # Test
-# python see/main.py \
-  # --yaml_file=<YAML> \
-  # --log_dir=<LOG> \
-  # --alsologtostderr=True  \
-  # --RESUME_PATH=<PRETRAIN_MODEL> \
-  # --TEST_ONLY=True \
-  # --VISUALIZE=True
+python see/main.py \
+  --yaml_file="/root/projects/SEE/options/SEE/EIFT_AAAI_SEE-v1.yaml" \
+  --log_dir="/root/autodl-tmp/models/EIFT_AAAI_SEE/eval_0513" \
+  --alsologtostderr=True  \
+  --RESUME_PATH="/root/autodl-tmp/models/EIFT_AAAI_SEE/checkpoint-010.pth.tar" \
+  --TEST_ONLY=True \
+  --VISUALIZE=True \
+  --VAL_BATCH_SIZE=1

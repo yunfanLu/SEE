@@ -31,7 +31,7 @@ METRICS:
   - NAME: SSIM
 DATASET:
   NAME: see_everything_everytime_dataset
-  root: dataset/3-ComplexLight/RoboticArm/
+  root: /root/autodl-tmp/data/SEE-600K/RoboticArm/
   in_frames: 1
   crop_h: 128
   crop_w: 256
@@ -43,6 +43,7 @@ DATASET:
     to_bin: true
   testing_mapping_type:
     - "high-normal"
+    - "normal-normal"
     - "low-normal"
   training_mapping_type:
     - "high-normal"
