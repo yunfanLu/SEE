@@ -1,0 +1,60 @@
+JOBS: 12
+TEST_ONLY: false
+LOG_INTERVAL: 10
+TRAIN_BATCH_SIZE: 8
+VAL_BATCH_SIZE: 8
+START_EPOCH: 0
+END_EPOCH: 80
+VAL_INTERVAL: 1
+MODEL_SANING_INTERVAL: 1
+MIX_PRECISION: false
+RESUME:
+  PATH: null
+  TYPE: null
+  SET_EPOCH: true
+LAUNCHER: ParallelLaunch
+SEED: 9527
+IS_CUDA: true
+OPTIMIZER:
+  NAME: Adam
+  LR: 0.0002
+  LR_SCHEDULER: cosine
+  end_epoch: 80
+LOSS:
+  - NAME: l1_charbonnier_loss
+    WEIGHT: 1
+METRICS:
+  - NAME: PSNR
+  - NAME: SSIM
+DATASET:
+  NAME: see_everything_everytime_dataset
+  root: dataset/3-ComplexLight/RoboticArm/
+  in_frames: 1
+  crop_h: 256
+  crop_w: 256
+  sample_step: 10
+  event_representation_config:
+    type: voxel_grid
+    channel: 80
+    scale: 5
+    to_bin: true
+  testing_mapping_type:
+    - "high-normal"
+    - "normal-normal"
+    - "low-normal"
+  training_mapping_type:
+    - "high-normal"
+    - "low-normal"
+    - "normal-normal"
+MODEL:
+  NAME: eSL
+  input_frames: 1
+  event_moments: 80
+  hidden_channels: 128
+  high_dim_channels: 128
+  loop: 20
+VISUALIZATION:
+  folder: ./vis
+  tag: eSl_SEE-v1
+  intermediate_visualization: false
+  ONLY_VIS: false
