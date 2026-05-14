@@ -79,9 +79,7 @@ The official evaluation will be conducted on the test set.
 - **Workshop Website**: [https://eventbasemultimodalvision.github.io](https://eventbasemultimodalvision.github.io)
 - **Dataset**: [https://huggingface.co/datasets/yunfanlu/SEE-600K](https://huggingface.co/datasets/yunfanlu/SEE-600K)
 - **Baseline Code**: [https://github.com/yunfanLu/SEE](https://github.com/yunfanLu/SEE)
-- **Competition Page**: Coming soon
-- **Evaluation Server**: Coming soon
-- **Leaderboard**: Coming soon
+- **Competition Page**: [https://www.codabench.org/competitions/16195/](https://www.codabench.org/competitions/16195/#/pages-tab)
 
 ---
 
