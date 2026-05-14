@@ -4,7 +4,84 @@ Welcome to the **SEE** project repository! We introduce a new framework for enha
 ## 🎯 Overview
 In this project, we explore how to use event-based cameras, with their high dynamic range (HDR), to handle images under various lighting conditions. We propose the **SEE-600K dataset**—a large-scale dataset capturing images under a range of lighting conditions—and a novel framework, **SEE-Net**, that can adjust brightness smoothly and effectively using events.
 
+---
 
+## 🔥 SEE Challenge 2026
+
+<p align="center">
+  <img src="./images/SEE-logo.jpg" alt="SEE Challenge 2026 logo" width="260">
+</p>
+
+We are organizing the **SEE Challenge 2026: Event-Guided Low-Level Imaging**, associated with **EBMV @ ECCV 2026**: **Event-Based Multimodal Vision: Imaging, Perception, and Understanding**.
+
+This challenge focuses on **event-guided brightness adjustment under broad lighting conditions**. Participants are asked to use RGB frames and event streams to restore well-exposed, structurally faithful, and visually clear images from challenging illumination scenes, including low light, over-exposure, mixed illumination, and high-contrast conditions.
+
+The challenge is based on **SEE-600K**, a large-scale RGB-event dataset introduced in our paper.
+
+### Task
+
+Given:
+
+- an RGB image captured under challenging illumination,
+- the corresponding event stream or event representation,
+- optional brightness prompt or metadata if provided,
+
+participants should output a **brightness-adjusted RGB image**.
+
+The output should preserve scene structure, recover useful details, maintain natural color appearance, and avoid unrealistic hallucination.
+
+### Dataset
+
+The challenge uses **SEE-600K**, which contains:
+
+- 610,126 images with corresponding event data,
+- 202 real-world scenarios,
+- low-light, normal-light, and high-light conditions,
+- multiple lighting groups per scene,
+- broad illumination variations for event-guided image enhancement.
+
+Dataset link: [https://huggingface.co/datasets/yunfanlu/SEE-600K](https://huggingface.co/datasets/yunfanlu/SEE-600K)
+
+### Evaluation
+
+The official evaluation will be conducted on the test set.
+
+| Metric | Meaning | Ranking |
+| --- | --- | --- |
+| PSNR | Pixel-level reconstruction accuracy | Primary, higher is better |
+| SSIM | Structural similarity | Secondary, higher is better |
+| LPIPS | Perceptual distance | Secondary, lower is better |
+
+### Timeline
+
+| Date | Event |
+| --- | --- |
+| May 10, 2026 | Challenge website opens |
+| May 25, 2026 | Validation server online |
+| June 25, 2026 | Test data released and test server online |
+| July 3, 2026 | Test submission deadline |
+| July 10, 2026 | Results announcement, tentative |
+
+### Challenge Visuals
+
+| Problem Definition | Dataset Samples |
+| --- | --- |
+| <img src="./images/2-Problem-Define.jpg" alt="SEE challenge task definition with challenging input, event guidance, and restored output"> | <img src="./images/0-Dataset-Sample.jpg" alt="SEE-600K dataset samples under low, normal, and high lighting conditions"> |
+| Input RGB under challenging illumination + event representation -> brightness-adjusted RGB output. | Examples cover low-light, normal-light, high-light, mixed illumination, and event views. |
+
+| Scenario Coverage | Baseline Visualization |
+| --- | --- |
+| <img src="./images/1-MoreExamples-WordCloud.jpg" alt="SEE-600K scene examples and scenario word cloud"> | <img src="./images/3-BaseLine-Release.jpg" alt="SEE baseline visualization results produced by the released code"> |
+| 202 real-world scenarios with broad scene categories and multiple lighting groups. | SEE-Net uses RGB frames, event data, and a brightness prompt for controllable output exposure. |
+
+### Links
+
+- **Workshop Website**: [https://eventbasemultimodalvision.github.io](https://eventbasemultimodalvision.github.io)
+- **Dataset**: [https://huggingface.co/datasets/yunfanlu/SEE-600K](https://huggingface.co/datasets/yunfanlu/SEE-600K)
+- **Baseline Code**: [https://github.com/yunfanLu/SEE](https://github.com/yunfanLu/SEE)
+- **Competition Page**: Coming soon
+- **Evaluation Server**: Coming soon
+- **Leaderboard**: Coming soon
 
 ---
 
@@ -36,7 +113,32 @@ Key Features:
 - **Brightness Adjustment** 🌈: Our framework allows for pixel-level brightness adjustment based on the events captured by the camera.
 - **Compact & Efficient** ⚡: SEE-Net is designed with efficiency in mind, with only 1.9 million parameters, making it suitable for real-time applications.
 
-![](./images/WX20250227-175014@2x.png)
+### Pretrain Model
+
+We provide a Google Drive folder that includes pretrained checkpoints, evaluation logs, and the corresponding experiment files for the released baselines. The package is organized by method, so you can quickly locate the checkpoint you need and reproduce the reported results with minimal setup.
+
+**Download link:**
+
+https://drive.google.com/drive/folders/1SWR9YVIrqFEkGGKrv3wSC5RqmMIEYjV2?usp=sharing
+
+**Folder contents:**
+
+```text
+.
+├── EIFT_AAAI_SEE
+│   ├── checkpoint-010.pth.tar
+│   └── py_SEE_eval_for_model.INFO.log
+├── eSl_SEE
+│   ├── checkpoint.pth.tar
+│   ├── py_main.INFO.log
+│   └── py_SEE_eval_for_model.cc2931668b9f.root.log.INFO.20240923-171527.3734002.log
+├── EvLight
+│   └── checkpoint.pth.tar
+├── SEENet_SEE
+│   ├── checkpoint.pth.tar
+│   ├── py_SEE_eval_for_model.INFO.log
+└── TEST_RESULTS.md
+```
 
 ### 🖥️ Installation
 
