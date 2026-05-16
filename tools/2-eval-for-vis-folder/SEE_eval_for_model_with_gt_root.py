@@ -93,6 +93,18 @@ def _build_gt_index(gt_video_folder: Path):
     return gt_index
 
 
+def summarize_results(all_eval, low_nml_eval, hgh_nml_eval, nml_nml_eval):
+    def pack(eval_obj):
+        return {"count": eval_obj.count, "metrics": eval_obj.get()}
+
+    return {
+        "All": pack(all_eval),
+        "Low-Normal": pack(low_nml_eval),
+        "High-Normal": pack(hgh_nml_eval),
+        "Normal-Normal": pack(nml_nml_eval),
+    }
+
+
 def collect_eval_pairs(vis_root, gt_root):
     vis_root = Path(vis_root)
     gt_root = Path(gt_root)
@@ -160,6 +172,7 @@ def main(_):
     f_npsnr = NormalizedPSNR("linear").cuda()
     f_l1 = torch.nn.L1Loss().cuda()
 
+    all_eval = Eval("all")
     low_nml_eval = Eval("low_nml")
     hgh_nml_eval = Eval("hgh_nml")
     nml_nml_eval = Eval("nml_nml")
@@ -172,6 +185,8 @@ def main(_):
         npsnr = f_npsnr(oi, gi).item()
         l1 = f_l1(oi, gi).item()
 
+        all_eval.add(psnr, ssim, npsnr, l1)
+
         video_folder_name = pair["video_folder_name"]
         if "high-normal" in video_folder_name:
             hgh_nml_eval.add(psnr, ssim, npsnr, l1)
@@ -183,11 +198,14 @@ def main(_):
             low_nml_eval.add(psnr, ssim, npsnr, l1)
             info(f"low-normal   : {low_nml_eval.get()}")
 
+    summary = summarize_results(all_eval, low_nml_eval, hgh_nml_eval, nml_nml_eval)
+
     info(f"VIS ROOT      : {vis_folder}")
     info(f"GT ROOT       : {gt_root}")
-    info(f"Low-Normal   : {low_nml_eval.get()}")
-    info(f"High-Normal  : {hgh_nml_eval.get()}")
-    info(f"Normal-Normal: {nml_nml_eval.get()}")
+    info(f"All          : count={summary['All']['count']} metrics={summary['All']['metrics']}")
+    info(f"Low-Normal   : count={summary['Low-Normal']['count']} metrics={summary['Low-Normal']['metrics']}")
+    info(f"High-Normal  : count={summary['High-Normal']['count']} metrics={summary['High-Normal']['metrics']}")
+    info(f"Normal-Normal: count={summary['Normal-Normal']['count']} metrics={summary['Normal-Normal']['metrics']}")
 
 
 if __name__ == "__main__":
