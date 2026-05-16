@@ -9,7 +9,7 @@ from PIL import Image
 from skimage.metrics import structural_similarity as calc_ssim
 
 
-CATEGORIES = ["High_Norm", "Low_Norm", "Norm_Norm"]
+CATEGORIES = ["high-normal", "low-normal", "normal-normal"]
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"}
 
 PENALTY_PSNR = 0.0
@@ -166,14 +166,14 @@ def main():
         "PSNR": final_psnr,
         "SSIM": final_ssim,
 
-        "High_Norm_PSNR": cat_avg["High_Norm"]["PSNR"],
-        "High_Norm_SSIM": cat_avg["High_Norm"]["SSIM"],
+        "High_Norm_PSNR": cat_avg["high-normal"]["PSNR"],
+        "High_Norm_SSIM": cat_avg["high-normal"]["SSIM"],
 
-        "Low_Norm_PSNR": cat_avg["Low_Norm"]["PSNR"],
-        "Low_Norm_SSIM": cat_avg["Low_Norm"]["SSIM"],
+        "Low_Norm_PSNR": cat_avg["low-normal"]["PSNR"],
+        "Low_Norm_SSIM": cat_avg["low-normal"]["SSIM"],
 
-        "Norm_Norm_PSNR": cat_avg["Norm_Norm"]["PSNR"],
-        "Norm_Norm_SSIM": cat_avg["Norm_Norm"]["SSIM"],
+        "Norm_Norm_PSNR": cat_avg["normal-normal"]["PSNR"],
+        "Norm_Norm_SSIM": cat_avg["normal-normal"]["SSIM"],
 
         "num_gt": num_gt,
         "num_matched": num_matched,
