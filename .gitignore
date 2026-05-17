@@ -189,3 +189,5 @@ tools/1-trained-model-inference/
 
 *.tar
 .DS_Store
+
+*.zip
