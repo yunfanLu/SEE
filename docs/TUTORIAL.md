@@ -1,27 +1,25 @@
-# EBMV 2026 Low-Level Imaging Challenge: Getting Started Tutorial
+# SEE Tutorial
 
-This tutorial guides you through the entire process of participating in the **EBMV 2026 Low-Level Imaging Challenge**, from dataset preparation to running the baseline model.
+This tutorial explains how to set up the SEE repository, prepare the SEE-600K dataset, run baseline training, evaluate checkpoints, and generate inference outputs.
 
-- **Competition Page**: <https://www.codabench.org/competitions/16195/>
-- **Competition Report**: <https://arxiv.org/abs/2502.21120>
-- **Baseline Code**: <https://github.com/yunfanLu/SEE>
-- **Dataset**: <https://huggingface.co/datasets/yunfanlu/SEE-600K>
-- **Workshop**: <https://eventbasemultimodalvision.github.io>
+For project overview, dataset links, pretrained model links, and related resources, see [README.md](../README.md). For CodaBench packaging and upload instructions, see [CODABENCH_SUBMISSION_GUIDE.md](./CODABENCH_SUBMISSION_GUIDE.md).
 
-***
+---
 
-## 1. Download and Prepare the Dataset
+## 1. Clone the Repository
 
-### 1.1 Download SEE-600K
+```bash
+git clone https://github.com/yunfanLu/SEE.git
+cd SEE
+```
 
-The SEE-600K dataset is available on HuggingFace and OneDrive:
+---
 
-| Source      | Link                                                                                                                                            |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| HuggingFace | <https://huggingface.co/datasets/yunfanlu/SEE-600K>                                                                                             |
-| OneDrive    | [Link](https://hkustgz-my.sharepoint.com/:f:/g/personal/ylu066_connect_hkust-gz_edu_cn/EkNi59p2uHJFjxyeQraiVhgBSs1GnxK4DyCUP-uZhEspCA?e=ZpwOvY) |
+## 2. Prepare the Dataset
 
-**Option A: Download from HuggingFace (Recommended)**
+Download SEE-600K from one of the links listed in [README.md](../README.md#dataset-download). The Hugging Face version is already aligned and classified, so no additional registration is required.
+
+### 2.1 Download with Hugging Face CLI
 
 ```bash
 # Install huggingface_hub
@@ -31,22 +29,18 @@ pip install huggingface_hub
 hf download yunfanlu/SEE-600K --local-dir ./SEE-600K
 ```
 
-**Option B: Download specific subsets**
-
-If you have limited storage or bandwidth, you can download only the data you need:
+If you have limited storage or bandwidth, download only the required subset:
 
 ```bash
 # Download a specific split (e.g., RoboticArm)
 hf download yunfanlu/SEE-600K --include "RoboticArm/*" --local-dir ./SEE-600K
 ```
 
-> **Note**: If you download from HuggingFace, the data has already been aligned and can be used directly without additional registration.
-
-### 1.2 Dataset Structure
+### 2.2 Expected Dataset Structure
 
 After downloading, the dataset should have the following structure:
 
-```
+```text
 SEE-600K/
 └── RoboticArm/
     ├── 000-indoor_ceiling_table_light/       # Group folder (scene)
@@ -65,20 +59,20 @@ SEE-600K/
     └── ...
 ```
 
-### 1.3 Train/Test Split
+### 2.3 Train/Test Split
 
-The dataset contains 202 scenarios. The following groups are reserved for **testing** (do NOT use them for training):
+The dataset contains 202 scenarios. The following groups are reserved for **testing** and must not be used for training:
 
-| Type    | Groups                                                                                                       |
-| ------- | ------------------------------------------------------------------------------------------------------------ |
-| Indoor  | 000, 001, 002, 006, 012, 018, 030, 042, 048, 054, 060, 065, 070, 074, 075                                    |
+| Type | Groups |
+| --- | --- |
+| Indoor | 000, 001, 002, 006, 012, 018, 030, 042, 048, 054, 060, 065, 070, 074, 075 |
 | Outdoor | 100, 106, 112, 118, 124, 130, 136, 142, 148, 154, 160, 166, 173, 184, 189, 194, 200, 206, 212, 217, 222, 225 |
 
 All other groups are used for **training**.
 
-### 1.4 (Optional) Raw Data Processing
+### 2.4 Optional Raw Data Processing
 
-If you download raw `.aedat4` files instead of the pre-processed HuggingFace version, you need to process them:
+If you download raw `.aedat4` files instead of the pre-processed Hugging Face version, process them as follows:
 
 ```bash
 # Step 0: Extract frames, events, and IMU from .aedat4 files
@@ -96,22 +90,13 @@ python registration/main.py --video_group_root="dataset/RoboticArm/"
 python registration/exposure_classifier.py --root="dataset/RoboticArm/"
 ```
 
-> **Note**: If you download from HuggingFace, these steps are **NOT** needed — the data is already aligned and classified.
+The IMU registration tool is also available at <https://github.com/yunfanLu/IMU-Registration-Tool>.
 
-***
+---
 
-## 2. Clone the SEE Codebase
+## 3. Set Up the Python Environment
 
-```bash
-git clone https://github.com/yunfanLu/SEE.git
-cd SEE
-```
-
-***
-
-## 3. Install Python Environment
-
-### 3.1 Create a Conda Environment (Recommended)
+### 3.1 Create a Conda Environment
 
 ```bash
 conda create -n see python=3.10 -y
@@ -124,9 +109,9 @@ conda activate see
 pip install -r requirements.txt
 ```
 
-The `requirements.txt` includes:
+The `requirements.txt` file includes:
 
-```
+```text
 PyYAML
 torch
 absl-py
@@ -143,23 +128,19 @@ einops
 kornia
 ```
 
-### 3.3 Verify Installation
+### 3.3 Verify the Installation
 
 ```bash
 python -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA available: {torch.cuda.is_available()}')"
 ```
 
-Make sure CUDA is available for GPU training.
+CUDA should be available for GPU training.
 
-***
+---
 
-## 4. Run a Baseline Experiment
+## 4. Configure the Baseline
 
-### 4.1 Configure the Dataset Path
-
-Before training, you need to modify the dataset path in the YAML configuration file to match your local setup.
-
-Edit `options/SEE/SEENet_SEE.yaml` and update the `DATASET.root` field:
+Edit `options/SEE/SEENet_SEE.yaml` and update `DATASET.root` to match your local dataset path:
 
 ```yaml
 DATASET:
@@ -167,16 +148,37 @@ DATASET:
   root: /path/to/your/SEE-600K/RoboticArm/    # <-- Change this to your dataset path
 ```
 
-For example, if your dataset is at `/home/user/data/SEE-600K/RoboticArm/`:
+For example:
 
 ```yaml
 DATASET:
   root: /home/user/data/SEE-600K/RoboticArm/
 ```
 
-### 4.2 Training
+The default baseline configuration in `options/SEE/SEENet_SEE.yaml` is:
 
-Run the baseline training:
+| Parameter | Value | Description |
+| --- | --- | --- |
+| `TRAIN_BATCH_SIZE` | 2 | Batch size per GPU |
+| `VAL_BATCH_SIZE` | 2 | Validation batch size |
+| `START_EPOCH` | 0 | Starting epoch |
+| `END_EPOCH` | 20 | Total training epochs |
+| `OPTIMIZER.NAME` | Adam | Optimizer |
+| `OPTIMIZER.LR` | 0.0001 | Learning rate |
+| `OPTIMIZER.LR_SCHEDULER` | cosine | LR scheduler |
+| `LOSS` | L1-Charbonnier + Gradient | Loss functions |
+| `DATASET.crop_h` | 128 | Crop height |
+| `DATASET.crop_w` | 256 | Crop width |
+| `MODEL.NAME` | SEENet | Model architecture |
+| `MODEL.loop` | 10 | Sparse encoder iterations |
+| `MODEL.C1/C2` | 96 | Channel dimensions |
+| `MIX_PRECISION` | true | Mixed precision training |
+
+---
+
+## 5. Train SEE-Net
+
+Run the baseline training command:
 
 ```bash
 export PYTHONPATH="./":$PYTHONPATH
@@ -187,7 +189,13 @@ python see/main.py \
   --alsologtostderr=True
 ```
 
-**Multi-GPU training** (if you have multiple GPUs):
+You can also launch the provided script:
+
+```bash
+sh options/SEE/SEENet_SEE.sh
+```
+
+For multi-GPU training, set the visible GPU IDs before running the same command:
 
 ```bash
 export CUDA_VISIBLE_DEVICES="0,1"
@@ -200,42 +208,32 @@ python see/main.py \
 
 The code uses `nn.DataParallel` for multi-GPU training automatically.
 
-### 4.3 Key Training Configuration
-
-The default configuration in `options/SEE/SEENet_SEE.yaml`:
-
-| Parameter                | Value                     | Description               |
-| ------------------------ | ------------------------- | ------------------------- |
-| `TRAIN_BATCH_SIZE`       | 2                         | Batch size per GPU        |
-| `VAL_BATCH_SIZE`         | 2                         | Validation batch size     |
-| `START_EPOCH`            | 0                         | Starting epoch            |
-| `END_EPOCH`              | 20                        | Total training epochs     |
-| `OPTIMIZER.NAME`         | Adam                      | Optimizer                 |
-| `OPTIMIZER.LR`           | 0.0001                    | Learning rate             |
-| `OPTIMIZER.LR_SCHEDULER` | cosine                    | LR scheduler              |
-| `LOSS`                   | L1-Charbonnier + Gradient | Loss functions            |
-| `DATASET.crop_h`         | 128                       | Crop height               |
-| `DATASET.crop_w`         | 256                       | Crop width                |
-| `MODEL.NAME`             | SEENet                    | Model architecture        |
-| `MODEL.loop`             | 10                        | Sparse encoder iterations |
-| `MODEL.C1/C2`            | 96                        | Channel dimensions        |
-| `MIX_PRECISION`          | true                      | Mixed precision training  |
-
-### 4.4 Monitor Training with TensorBoard
+### 5.1 Monitor Training with TensorBoard
 
 ```bash
 tensorboard --logdir=./logs/SEE/SEENet_SEE/ --port=6006 --bind_all
 ```
 
-Then open `http://localhost:6006` in your browser.
-
-If you are on a remote server, use SSH port forwarding:
+Then open `http://localhost:6006` in your browser. On a remote server, use SSH port forwarding:
 
 ```bash
 ssh -L 6006:localhost:6006 user@server_ip
 ```
 
-### 4.5 Testing / Validation
+### 5.2 Resume Training from a Checkpoint
+
+```bash
+python see/main.py \
+  --yaml_file="options/SEE/SEENet_SEE.yaml" \
+  --log_dir="./logs/SEE/SEENet_SEE/" \
+  --alsologtostderr=True \
+  --RESUME_PATH="./logs/SEE/SEENet_SEE/checkpoint.pth.tar" \
+  --RESUME_SET_EPOCH=True
+```
+
+---
+
+## 6. Evaluate or Run Inference
 
 After training, run validation with a trained checkpoint:
 
@@ -250,120 +248,89 @@ python see/main.py \
   --VAL_BATCH_SIZE=4
 ```
 
-Key flags for testing:
+Key testing flags:
 
-| Flag                   | Description                                  |
-| ---------------------- | -------------------------------------------- |
-| `--TEST_ONLY=True`     | Skip training, run validation only           |
-| `--VISUALIZE=True`     | Save output images during validation         |
-| `--RESUME_PATH=<path>` | Path to trained checkpoint                   |
-| `--VAL_BATCH_SIZE=4`   | Can increase batch size for faster inference |
+| Flag | Description |
+| --- | --- |
+| `--TEST_ONLY=True` | Skip training and run validation only |
+| `--VISUALIZE=True` | Save output images during validation |
+| `--RESUME_PATH=<path>` | Path to the trained checkpoint |
+| `--VAL_BATCH_SIZE=4` | Increase batch size for faster inference if memory allows |
 
-### 4.6 Brightness Adjustment with Exposure Prompts
+To evaluate a visualization folder, run:
 
-The SEE model supports continuous brightness control via an exposure prompt **B**:
+```bash
+python tools/2-eval-for-vis-folder/SEE_eval_for_model.py \
+    --root="/path/to/your/vis/folder" \
+    --log_dir="/path/to/your/log/dir" \
+    --alsologtostderr=True
+```
 
-- **B ≈ 0.5**: Normal exposure (recommended)
-- **B > 0.5**: Brighter output
-- **B < 0.5**: Darker output
+To evaluate with an explicit ground-truth root, run:
 
-This is controlled in the model's forward pass:
+```bash
+python tools/2-eval-for-vis-folder/SEE_eval_for_model_with_gt_root.py \
+    --root="/path/to/your/eval/folder" \
+    --gt_root="/path/to/your/gt/root" \
+    --log_dir="/path/to/your/log/dir" \
+    --alsologtostderr=True
+```
+
+Baseline metric summaries are available in [TEST_RESULTS.md](./TEST_RESULTS.md) and [TEST_MINI_RESULTS.md](./TEST_MINI_RESULTS.md).
+
+---
+
+## 7. Use Exposure Prompts for Brightness Adjustment
+
+SEE-Net supports continuous brightness control through an exposure prompt **B**:
+
+- **B ≈ 0.5**: normal exposure and the typical operating range;
+- **B > 0.5**: brighter output;
+- **B < 0.5**: darker output.
+
+The model applies the prompt during decoding:
 
 ```python
 exposure_prompt = torch.ones(size=(B, 1, 1, 1)) * exposure_B
-output = model._decoding(light_inr, exposure_prompt)
+exposure_prompt = exposure_prompt.to(images.device)
+exposure_normal_reconstructed = self._decoding(light_inr, exposure_prompt)
 ```
 
 During testing, the model generates three types of output:
 
-- **PRD**: Prediction using target exposure prompt
-- **SLR**: Self-supervised reconstruction (using input's own mean)
-- **NLR**: Standard light reconstruction (using fixed B=0.4)
+- **PRD**: prediction using the target exposure prompt;
+- **SLR**: self-supervised reconstruction using the input mean;
+- **NLR**: standard-light reconstruction using fixed `B=0.4`.
 
-***
+Extreme values of **B** are mainly intended for analysis and visualization rather than as target outputs. The framework is designed for brightness adjustment rather than full HDR reconstruction.
 
-## 5. Prepare Submission
+---
 
-### 5.1 Submission Format
+## 8. FAQ
 
-Each submission should be a ZIP file with the following structure:
+### How much GPU memory is needed?
 
-```
-submission.zip
-└── results/
-    ├── scene_000001.png
-    ├── scene_000002.png
-    ├── scene_000003.png
-    └── ...
-```
+The baseline SEENet model has approximately **1.9M parameters**. With batch size 2 and crop size 128×256, it requires approximately **6-8 GB** of GPU memory. Adjust `TRAIN_BATCH_SIZE` and crop size based on your hardware.
 
-### 5.2 Requirements
+### Can I use external data?
 
-1. Output filenames must match the input sample IDs
-2. Images should be saved as **PNG** files
-3. Output images should be **RGB** images
-4. Output resolution must match the input/reference resolution
-5. Do not change the folder structure
-6. Do not include extra files unless explicitly required
+Yes. External training data, pretrained models, and synthetic data are allowed, but they must be **clearly reported** in the final technical report.
 
-### 5.3 Evaluation Metrics
+### How long does training take?
 
-| Metric | Description                         | Priority              |
-| ------ | ----------------------------------- | --------------------- |
-| PSNR   | Pixel-level reconstruction accuracy | **Primary** (ranking) |
-| SSIM   | Structural similarity               | Secondary             |
-| LPIPS  | Perceptual similarity               | Secondary             |
+With a single A100 GPU, baseline training for 20 epochs takes approximately **10-15 hours**. Training time varies by GPU.
 
-***
+### Why is TensorBoard empty?
 
-## 6. Tips and FAQ
+Check the following:
 
-### Q: How much GPU memory is needed?
+1. `--logdir` points to the directory that contains `events.out.tfevents.*` files.
+2. Training has started and logged at least one epoch; check `LOG_INTERVAL` in the config.
+3. If using a remote server, SSH port forwarding is configured correctly.
 
-The baseline model (SEENet) has only **1.9M parameters**. With batch size 2 and crop size 128×256, it requires approximately **6-8 GB** GPU memory. You can adjust `TRAIN_BATCH_SIZE` and crop size based on your hardware.
+---
 
-### Q: Can I use external data?
-
-Yes, external training data, pretrained models, and synthetic data are allowed, but they must be **clearly reported** in the final technical report.
-
-### Q: How long does training take?
-
-With a single A100 GPU, the baseline training (20 epochs) takes approximately **10-15 hours**. Training time varies depending on your GPU.
-
-### Q: The TensorBoard page is empty / no curves
-
-Make sure:
-
-1. The `--logdir` path points to the correct directory containing `events.out.tfevents.*` files
-2. Training has started and logged at least one epoch (check `LOG_INTERVAL` in the config)
-3. If using a remote server, ensure port forwarding is set up correctly
-
-### Q: How to resume training from a checkpoint?
-
-```bash
-python see/main.py \
-  --yaml_file="options/SEE/SEENet_SEE.yaml" \
-  --log_dir="./logs/SEE/SEENet_SEE/" \
-  --alsologtostderr=True \
-  --RESUME_PATH="./logs/SEE/SEENet_SEE/checkpoint.pth.tar" \
-  --RESUME_SET_EPOCH=True
-```
-
-***
-
-## 7. Important Dates
-
-| Date          | Event                                     |
-| ------------- | ----------------------------------------- |
-| May 15, 2026  | Challenge website opens                   |
-| May 25, 2026  | Validation server online                  |
-| June 25, 2026 | Test data released and test server online |
-| July 3, 2026  | Test submission deadline                  |
-| July 10, 2026 | Results announcement (tentative)          |
-
-***
-
-## 8. Citation
+## 9. Citation
 
 If you use the SEE-600K dataset or SEE-Net, please cite:
 
@@ -375,11 +342,9 @@ If you use the SEE-600K dataset or SEE-Net, please cite:
 }
 ```
 
-***
+---
 
-## 9. Contact
+## 10. Contact
 
 - **Yunfan Lu**: <ylu066@connect.hkust-gz.edu.cn>
 - **GitHub**: [yunfanLu](https://github.com/yunfanLu)
-- **Competition Forum**: <https://www.codabench.org/forums/15944/>
-
