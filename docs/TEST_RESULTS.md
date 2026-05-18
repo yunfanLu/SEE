@@ -51,15 +51,6 @@ This document summarizes baseline test results on the SEE dataset.
 - Per-lighting-condition results are reported as `(PSNR, SSIM, PSNR-Linear_N, L1)`.
 - Among the tested baselines, SEENet achieves the best overall performance on the SEE dataset.
 
-## How to Run Evaluation
+## Evaluation Usage
 
-To evaluate your own model:
-
-```bash
-python tools/2-eval-for-vis-folder/SEE_eval_for_model.py \
-    --root="/path/to/your/vis/folder" \
-    --log_dir="/path/to/your/log/dir" \
-    --alsologtostderr=True
-```
-
-For more details, see [TUTORIAL.md](./TUTORIAL.md).
+For evaluation commands and usage details, see [TUTORIAL.md](./TUTORIAL.md#6-evaluate-or-run-inference).
