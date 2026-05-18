@@ -1,9 +1,27 @@
 # SEE: See Everything Every Time
 
+<p align="center">
+  <img src="./images/SEE-logo.jpg" alt="SEE Challenge 2026 logo" width="260">
+</p>
+
+**SEE** is a framework for adaptive brightness adjustment across broad lighting conditions using RGB frames and event-camera data. This repository provides the code for **SEE-Net** and resources for the **SEE-600K** dataset.
+
 - **Event-guided brightness adjustment**: uses RGB frames together with event data for broad-light-range image enhancement.
 - **Continuous exposure control**: supports pixel-level brightness adjustment through an exposure prompt.
 - **Compact baseline**: SEE-Net has approximately **1.9M parameters**.
 - **Large-scale dataset support**: built around SEE-600K, which contains **610,126 images with corresponding event data** across **202 real-world scenarios**.
+
+## Visual Highlights
+
+| Problem Definition | Dataset Samples |
+| --- | --- |
+| <img src="./images/2-Problem-Define.jpg" alt="SEE challenge task definition with challenging input, event guidance, and restored output"> | <img src="./images/0-Dataset-Sample.jpg" alt="SEE-600K dataset samples under low, normal, and high lighting conditions"> |
+| Input RGB under challenging illumination + event representation -> brightness-adjusted RGB output. | Examples cover low-light, normal-light, high-light, mixed illumination, and event views. |
+
+| Scenario Coverage | Baseline Visualization |
+| --- | --- |
+| <img src="./images/1-MoreExamples-WordCloud.jpg" alt="SEE-600K scene examples and scenario word cloud"> | <img src="./images/3-BaseLine-Release.jpg" alt="SEE baseline visualization results produced by the released code"> |
+| 202 real-world scenarios with broad scene categories and multiple lighting groups. | SEE-Net uses RGB frames, event data, and a brightness prompt for controllable output exposure. |
 
 ## Dataset Download
 
