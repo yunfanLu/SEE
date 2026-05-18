@@ -39,7 +39,6 @@ Official evaluation is conducted on the test set.
 | --- | --- | --- |
 | PSNR | Pixel-level reconstruction accuracy | Primary, higher is better |
 | SSIM | Structural similarity | Secondary, higher is better |
-| LPIPS | Perceptual distance | Secondary, lower is better |
 
 ## Timeline
 

@@ -2,7 +2,7 @@
 
 This guide explains how to prepare SEE prediction results and submit them to CodaBench. For environment setup, model training, evaluation, and inference, see [TUTORIAL.md](./TUTORIAL.md).
 
----
+***
 
 ## 1. Generate Inference Results
 
@@ -22,7 +22,7 @@ This corresponds to:
 
 If the inference crop size is not set to the original image size, the output may not match the competition test-set requirements.
 
----
+***
 
 ## 2. Collect Competition Prediction Images
 
@@ -57,20 +57,15 @@ python codabench/collect_codabench_pred.py /path/to/vis /path/to/output_dir --ov
 
 After the script finishes, the output directory contains the organized prediction results for submission.
 
----
+***
 
 ## 3. Package the Submission
 
 Create a zip file from the collected output directory:
 
 ```bash
-zip -r submission.zip ${output_directory}
-```
-
-Example:
-
-```bash
-zip -r submission.zip /path/to/output_dir
+cd /path/to/output_dir
+zip -r submission.zip ./* 
 ```
 
 Before uploading, check that:
@@ -80,7 +75,7 @@ Before uploading, check that:
 - the directory structure inside the zip file is correct;
 - the images are saved at the original SEE image size.
 
----
+***
 
 ## 4. Upload to CodaBench
 
@@ -91,7 +86,7 @@ Before uploading, check that:
 
 If the CodaBench submission status is abnormal, first check the zip file's internal directory structure and file naming.
 
----
+***
 
 ## 5. Workflow Summary
 
@@ -100,7 +95,9 @@ If the CodaBench submission status is abnormal, first check the zip file's inter
 python codabench/collect_codabench_pred.py ${prediction_vis_directory} ${output_directory}
 
 # 2. Package the collected folder
-zip -r submission.zip ${output_directory}
+cd ${output_directory}
+zip -r submission.zip ./* 
 
 # 3. Upload submission.zip on CodaBench
 ```
+
