@@ -1,11 +1,5 @@
 # SEE: See Everything Every Time
 
-**SEE** is a framework for adaptive brightness adjustment across broad lighting conditions using RGB frames and event-camera data. This repository provides the code for **SEE-Net** and resources for the **SEE-600K** dataset.
-
-SEE-Net uses event guidance to enhance images captured under low light, over-exposure, mixed illumination, and high-contrast scenes while preserving scene structure and natural appearance.
-
-## Key Features
-
 - **Event-guided brightness adjustment**: uses RGB frames together with event data for broad-light-range image enhancement.
 - **Continuous exposure control**: supports pixel-level brightness adjustment through an exposure prompt.
 - **Compact baseline**: SEE-Net has approximately **1.9M parameters**.

@@ -1,5 +1,9 @@
 # SEE：See Everything Every Time
 
+<p align="center">
+  <img src="./images/SEE-logo.jpg" alt="SEE Challenge 2026 logo" width="260">
+</p>
+
 **SEE** 是一个利用 RGB 图像与事件相机数据，在宽光照范围内进行自适应亮度调整的框架。本仓库提供 **SEE-Net** 的代码以及 **SEE-600K** 数据集相关资源。
 
 SEE-Net 使用事件信息作为引导，在低光、过曝、混合光照和高对比度场景中增强图像，同时保持场景结构和自然观感。
@@ -10,6 +14,18 @@ SEE-Net 使用事件信息作为引导，在低光、过曝、混合光照和高
 - **连续曝光控制**：通过曝光提示支持像素级亮度调整。
 - **轻量级基线模型**：SEE-Net 约有 **1.9M 参数**。
 - **大规模数据集支持**：基于 SEE-600K 构建，该数据集包含 **610,126 张图像及对应事件数据**，覆盖 **202 个真实场景**。
+
+## 视觉亮点
+
+| 问题定义 | 数据集样例 |
+| --- | --- |
+| <img src="./images/2-Problem-Define.jpg" alt="SEE challenge task definition with challenging input, event guidance, and restored output"> | <img src="./images/0-Dataset-Sample.jpg" alt="SEE-600K dataset samples under low, normal, and high lighting conditions"> |
+| 复杂光照下的输入 RGB + 事件表示 -> 亮度调整后的 RGB 输出。 | 示例覆盖低光、正常光、高光、混合光照和事件视图。 |
+
+| 场景覆盖 | 基线可视化 |
+| --- | --- |
+| <img src="./images/1-MoreExamples-WordCloud.jpg" alt="SEE-600K scene examples and scenario word cloud"> | <img src="./images/3-BaseLine-Release.jpg" alt="SEE baseline visualization results produced by the released code"> |
+| 202 个真实世界场景，覆盖广泛场景类别和多个光照组。 | SEE-Net 使用 RGB 图像、事件数据和亮度提示实现可控输出曝光。 |
 
 ## 数据集下载
 

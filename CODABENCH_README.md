@@ -67,8 +67,13 @@ Official evaluation is conducted on the test set.
 
 1. Visit the GitHub repository for code and documentation: <https://github.com/yunfanLu/SEE>.
 2. Download SEE-600K from Hugging Face: <https://huggingface.co/datasets/yunfanlu/SEE-600K>.
-3. Follow the repository tutorial to set up the environment and run the baseline.
-4. Follow the repository CodaBench submission guide when preparing your submission package.
+3. Set up the environment and dataset by following the repository tutorial: <https://github.com/yunfanLu/SEE/blob/main/docs/TUTORIAL.md>.
+
+### Baseline Workflow
+
+1. **Train a model.** Follow the training section in the tutorial: <https://github.com/yunfanLu/SEE/blob/main/docs/TUTORIAL.md#5-train-see-net>.
+2. **Run inference.** Follow the evaluation and inference section in the tutorial to generate the `vis` folder: <https://github.com/yunfanLu/SEE/blob/main/docs/TUTORIAL.md#6-evaluate-or-run-inference>.
+3. **Submit the mini test predictions to CodaBench.** Use the CodaBench submission guide to collect the required predictions from `vis`, package them, and upload the zip file: <https://github.com/yunfanLu/SEE/blob/main/docs/CODABENCH_SUBMISSION_GUIDE.md>.
 
 ## Links
 

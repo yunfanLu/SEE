@@ -6,7 +6,7 @@
 
 ## 1. 生成推理结果
 
-使用训练好的模型运行推理并保存可视化结果。输出目录通常命名为 `vis`。
+使用训练好的模型运行推理并保存可视化结果。输出目录通常命名为 `vis`；它包含推理阶段保存的所有图像。具体推理命令和测试参数请见 [TUTORIAL_ZH.md](./TUTORIAL_ZH.md#6-评测或运行推理)。
 
 在生成提交预测结果之前，请确保对应 YAML 文件中的推理裁剪尺寸设置为 SEE 原始图像大小：
 
@@ -40,7 +40,7 @@ python codabench/collect_codabench_pred.py /path/to/vis /path/to/output_dir
 
 参数说明：
 
-- `${prediction_vis_directory}`：模型推理后生成的 `vis` 文件夹；
+- `${prediction_vis_directory}`：模型推理后生成的 `vis` 文件夹。该文件夹保存推理输出的所有图像；生成方法请见 [TUTORIAL_ZH.md](./TUTORIAL_ZH.md#6-评测或运行推理)；
 - `${output_directory}`：用于保存收集后 CodaBench 提交结果的文件夹。
 
 脚本默认使用列表 `codabench/SEE_gt_mini.txt`。如果要使用其他列表，请传入 `--list`：

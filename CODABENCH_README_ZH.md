@@ -67,8 +67,13 @@
 
 1. 访问 GitHub 仓库获取代码和文档：<https://github.com/yunfanLu/SEE>。
 2. 从 Hugging Face 下载 SEE-600K：<https://huggingface.co/datasets/yunfanlu/SEE-600K>。
-3. 按照仓库教程配置环境并运行基线。
-4. 准备提交包时，请按照仓库中的 CodaBench 提交指南操作。
+3. 按照仓库教程配置环境和数据集：<https://github.com/yunfanLu/SEE/blob/main/docs/TUTORIAL_ZH.md>。
+
+### 基线流程
+
+1. **训练模型。** 请参考教程中的训练章节：<https://github.com/yunfanLu/SEE/blob/main/docs/TUTORIAL_ZH.md#5-训练-see-net>。
+2. **运行推理。** 请参考教程中的评测和推理章节生成 `vis` 文件夹：<https://github.com/yunfanLu/SEE/blob/main/docs/TUTORIAL_ZH.md#6-评测或运行推理>。
+3. **将 mini 测试集预测结果提交到 CodaBench。** 按照 CodaBench 提交指南，从 `vis` 中收集所需预测结果、打包并上传 zip 文件：<https://github.com/yunfanLu/SEE/blob/main/docs/CODABENCH_SUBMISSION_GUIDE_ZH.md>。
 
 ## 链接
 

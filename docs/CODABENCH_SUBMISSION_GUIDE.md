@@ -6,7 +6,7 @@ This guide explains how to prepare SEE prediction results and submit them to Cod
 
 ## 1. Generate Inference Results
 
-Run inference with your trained model and save visualization results. The output directory is usually named `vis`.
+Run inference with your trained model and save visualization results. The output directory is usually named `vis`; it contains all images saved by inference. For the exact inference command and testing flags, see [TUTORIAL.md](./TUTORIAL.md#6-evaluate-or-run-inference).
 
 Before generating submission predictions, make sure the inference crop size in the corresponding YAML file is set to the original SEE image size:
 
@@ -40,7 +40,7 @@ python codabench/collect_codabench_pred.py /path/to/vis /path/to/output_dir
 
 Arguments:
 
-- `${prediction_vis_directory}`: the `vis` folder generated after model inference;
+- `${prediction_vis_directory}`: the `vis` folder generated after model inference. This folder stores all inference output images; see [TUTORIAL.md](./TUTORIAL.md#6-evaluate-or-run-inference) for how to generate it;
 - `${output_directory}`: the folder used to save the collected prediction results for CodaBench submission.
 
 The script uses the default list `codabench/SEE_gt_mini.txt`. To use another list, pass `--list`:
