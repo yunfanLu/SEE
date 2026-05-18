@@ -1,77 +1,38 @@
-# Codabench 测试提交流程中文说明
+# CodaBench 提交指南
 
-本文档用于说明 SEE 项目中，从模型训练、推理测试，到整理比赛测试集预测结果并提交到 Codabench 的完整流程。
-
----
-
-## 1. 模型训练
-
-模型训练统一通过 `options/SEE/` 目录下对应模型的 shell 脚本启动。
-
-以 **SEENet** 为例，训练命令为：
-
-```bash
-sh options/SEE/SEENet_SEE.sh
-```
-
-说明：
-- 不同模型通常都有各自对应的脚本；
-- 如果需要训练其他模型，只需要替换成对应的 `.sh` 文件即可；
-- 训练相关配置通常写在该脚本所引用的 `.yaml` 文件中。
+本指南说明如何准备 SEE 预测结果并提交到 CodaBench。环境配置、模型训练、评测和推理请见 [TUTORIAL_ZH.md](./TUTORIAL_ZH.md)。
 
 ---
 
-## 2. 模型推理 / Inference
+## 1. 生成推理结果
 
-模型训练完成后，进行测试推理时，仍然调用对应模型脚本中的**测试部分**。
+使用训练好的模型运行推理并保存可视化结果。输出目录通常命名为 `vis`。
 
-以 **SEENet** 为例，测试代码同样参考：
-
-```bash
-sh options/SEE/SEENet_SEE.sh
-```
-
-需要注意：
-
-- 推理时请使用该脚本中的 **Test / 测试部分**；
-- 推理前需要检查对应的 YAML 配置；
-- **inference 时，yaml 中的 crop 图像宽高必须设置为原图大小**。
-
-对于 SEE 数据集，这里需要设置为：
+在生成提交预测结果之前，请确保对应 YAML 文件中的推理裁剪尺寸设置为 SEE 原始图像大小：
 
 ```yaml
 crop_w: 346
 crop_h: 260
 ```
 
-也就是原图大小：
+这对应于：
 
-- 宽 `346`
-- 高 `260`
+- 宽度：`346`
+- 高度：`260`
 
-如果推理时 crop 大小不是原图大小，可能会导致输出结果与比赛测试集要求不一致。
+如果推理裁剪尺寸没有设置为原始图像大小，输出可能不符合比赛测试集要求。
 
 ---
 
-## 3. 从可视化结果中抽取比赛测试集对应预测图
+## 2. 收集比赛预测图像
 
-完成推理后，通常会得到模型的可视化结果目录（`vis` 文件夹）。
-
-接下来，需要从这些测试结果中，抽取出**本次比赛 test 集对应 GT 的预测图像**。
-
-这里使用的脚本是：
+使用收集脚本抽取与比赛测试集 ground-truth 样本对应的预测图像：
 
 ```bash
-codabench/collect_codabench_pred.py
+python codabench/collect_codabench_pred.py ${prediction_vis_directory} ${output_directory}
 ```
 
-使用方式：
-
-```bash
-python codabench/collect_codabench_pred.py ${predict的vis目录} ${输出文件夹路径}
-```
-
-例如：
+示例：
 
 ```bash
 python codabench/collect_codabench_pred.py /path/to/vis /path/to/output_dir
@@ -79,66 +40,67 @@ python codabench/collect_codabench_pred.py /path/to/vis /path/to/output_dir
 
 参数说明：
 
-- `${predict的vis目录}`：模型推理后生成的 `vis` 文件夹；
-- `${输出文件夹路径}`：用于保存抽取后的比赛提交结果。
+- `${prediction_vis_directory}`：模型推理后生成的 `vis` 文件夹；
+- `${output_directory}`：用于保存收集后 CodaBench 提交结果的文件夹。
 
-执行完成后，输出文件夹中会保存整理好的、可用于比赛提交的预测结果。
+脚本默认使用列表 `codabench/SEE_gt_mini.txt`。如果要使用其他列表，请传入 `--list`：
+
+```bash
+python codabench/collect_codabench_pred.py /path/to/vis /path/to/output_dir --list /path/to/list.txt
+```
+
+如果输出目录已经存在且需要替换，请传入 `--overwrite`：
+
+```bash
+python codabench/collect_codabench_pred.py /path/to/vis /path/to/output_dir --overwrite
+```
+
+脚本执行完成后，输出目录中会包含整理好的提交结果。
 
 ---
 
-## 4. 打包并提交到 Codabench
+## 3. 打包提交文件
 
-当第 3 步得到输出文件夹后，需要将该文件夹打包为 zip 文件，然后上传到 Codabench 的 submission 页面。
-
-可以使用如下命令进行打包：
+将收集后的输出目录打包为 zip 文件：
 
 ```bash
-zip -r submission.zip ${输出文件夹路径}
+zip -r submission.zip ${output_directory}
 ```
 
-例如：
+示例：
 
 ```bash
 zip -r submission.zip /path/to/output_dir
 ```
 
-完成后：
+上传前，请检查：
 
-1. 打开 Codabench 比赛页面；
-2. 进入 **submission** 页面；
-3. 上传打包好的 `submission.zip`；
-4. 提交即可。
+- 输出文件数量是否正确；
+- 文件名格式是否符合比赛要求；
+- zip 文件内部目录结构是否正确；
+- 图像是否保存为 SEE 原始图像大小。
+
+---
+
+## 4. 上传到 CodaBench
+
+1. 打开 CodaBench 比赛页面：<https://www.codabench.org/competitions/16195/>。
+2. 进入 **submission** 页面。
+3. 上传 `submission.zip`。
+4. 提交文件。
+
+如果 CodaBench 提交状态异常，请先检查 zip 文件内部目录结构和文件命名。
 
 ---
 
 ## 5. 流程总结
 
-完整流程如下：
+```bash
+# 1. 收集用于提交的预测图像
+python codabench/collect_codabench_pred.py ${prediction_vis_directory} ${output_directory}
 
-1. 训练模型
-   ```bash
-   sh options/SEE/SEENet_SEE.sh
-   ```
-2. 使用脚本中的测试部分进行 inference；
-3. 确保 YAML 中推理时的图像大小设置为原图大小：
-   ```yaml
-   crop_w: 346
-   crop_h: 260
-   ```
-4. 使用如下命令抽取比赛提交所需预测结果：
-   ```bash
-   python codabench/collect_codabench_pred.py ${predict的vis目录} ${输出文件夹路径}
-   ```
-5. 将输出文件夹打包为 zip：
-   ```bash
-   zip -r submission.zip ${输出文件夹路径}
-   ```
-6. 将 zip 上传到 Codabench submission 页面。
+# 2. 打包收集后的文件夹
+zip -r submission.zip ${output_directory}
 
----
-
-## 6. 备注
-
-- 训练和测试都建议优先查看对应模型脚本中的注释；
-- 提交前建议先检查输出文件数量、命名格式以及目录结构是否符合比赛要求；
-- 如果 Codabench 提交后状态异常，可优先检查 zip 内部目录结构和文件命名是否正确。
+# 3. 在 CodaBench 上传 submission.zip
+```

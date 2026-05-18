@@ -55,16 +55,6 @@ This document summarizes baseline test results on the SEE mini GT dataset.
   - Normal-Normal: 162
 - Among the tested baselines, SEENet achieves the best overall performance on the SEE mini GT dataset.
 
-## How to Run Evaluation
+## Evaluation Usage
 
-To evaluate your own model with an explicit GT root:
-
-```bash
-python tools/2-eval-for-vis-folder/SEE_eval_for_model_with_gt_root.py \
-    --root="/path/to/your/eval/folder" \
-    --gt_root="/path/to/your/gt/root" \
-    --log_dir="/path/to/your/log/dir" \
-    --alsologtostderr=True
-```
-
-For more details, see [TUTORIAL.md](./TUTORIAL.md).
+For evaluation commands and usage details, see [TUTORIAL.md](./TUTORIAL.md#6-evaluate-or-run-inference).
