@@ -9,7 +9,7 @@ from absl.logging import info, debug, warn
 from registration import calibration as CALB
 
 
-VISUALIZATION = True
+VISUALIZATION = False
 
 ZOOM_SCALE = 10
 

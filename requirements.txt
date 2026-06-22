@@ -16,3 +16,5 @@ kornia
 # EvLowLight
 # tb-nightly
 # basicsr
+
+additional_data/

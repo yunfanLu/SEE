@@ -70,7 +70,7 @@ def make_registration_visualization_of_each_group(GROUP_ROOT):
         # timestamp is the first number of files
         frame_event_files = [[], []]
         for f in files:
-            timestamp = float(f.split("_")[0])
+            timestamp = float(f.split("_")[0]) if "_" in f else float(f.split(".")[0])
             if start_timestamp <= timestamp <= end_timestamp:
                 if "_vis" in f:
                     frame_event_files[1].append(f)
