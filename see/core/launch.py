@@ -36,6 +36,17 @@ def move_tensors_to_cuda(dictionary_of_tensors):
         return dictionary_of_tensors
 
 
+
+def get_grad_clip_settings(config):
+    grad_clip = getattr(config, "GRAD_CLIP", None)
+    if grad_clip is None:
+        return False, 1.0
+
+    enabled = bool(getattr(grad_clip, "ENABLED", False))
+    max_norm = float(getattr(grad_clip, "MAX_NORM", 1.0))
+    return enabled, max_norm
+
+
 class ParallelLaunch:
     def __init__(self, config):
         """The main class for parallel training. The entry point is the `run` method.
@@ -112,14 +123,6 @@ class ParallelLaunch:
                 model.load_state_dict(model_dict, strict=False)
 
         # 2. Build Dataloader
-        train_loader = DataLoader(
-            dataset=train_dataset,
-            batch_size=self.config.TRAIN_BATCH_SIZE,
-            shuffle=True,
-            num_workers=self.config.JOBS,
-            pin_memory=True,
-            drop_last=True,
-        )
         val_loader = DataLoader(
             dataset=val_dataset,
             batch_size=self.config.VAL_BATCH_SIZE,
@@ -132,6 +135,14 @@ class ParallelLaunch:
         if self.config.TEST_ONLY:
             self.valid(val_loader, model, criterion, metrics, 0)
             return
+        train_loader = DataLoader(
+            dataset=train_dataset,
+            batch_size=self.config.TRAIN_BATCH_SIZE,
+            shuffle=True,
+            num_workers=self.config.JOBS,
+            pin_memory=True,
+            drop_last=True,
+        )
         # 4. train
         min_loss = 123456789.0
         for epoch in range(self.config.START_EPOCH, self.config.END_EPOCH):
@@ -177,9 +188,11 @@ class ParallelLaunch:
         start_time = time.time()
         time_recoder = time.time()
         scaler = torch.amp.GradScaler("cuda")
+        grad_clip_enabled, grad_clip_max_norm = get_grad_clip_settings(self.config)
         for index, batch in enumerate(train_loader):
             if self.config.IS_CUDA:
                 batch = move_tensors_to_cuda(batch)
+            opt.zero_grad()
             if self.config.MIX_PRECISION:
                 with torch.amp.autocast(device_type="cuda"):
                     outputs = model(batch)
@@ -187,20 +200,21 @@ class ParallelLaunch:
                     # 2.1 forward
                     name_to_measure = metrics(outputs)
                     scaler.scale(losses).backward()
+                    if grad_clip_enabled:
+                        scaler.unscale_(opt)
+                        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip_max_norm, norm_type=2)
                     scaler.step(opt)
                     scaler.update()
-                    opt.zero_grad()
             else:
                 outputs = model(batch)
                 losses, name_to_loss = criterion(outputs)
                 # 2.1 forward
                 name_to_measure = metrics(outputs)
                 # 2.2 backward
-                opt.zero_grad()
                 losses.backward()
                 # 2.3 update weights
-                # clip the grad
-                # clip_grad_norm_(model.parameters(), max_norm=20, norm_type=2)
+                if grad_clip_enabled:
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip_max_norm, norm_type=2)
                 opt.step()
             # 2.4 update measure
             # 2.4.1 time update

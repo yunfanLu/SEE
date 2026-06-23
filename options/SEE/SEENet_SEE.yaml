@@ -32,6 +32,7 @@ METRICS:
 DATASET:
   NAME: see_everything_everytime_dataset
   root: /root/autodl-tmp/data/SEE-600K/RoboticArm/
+  # all_groups_as_testing: true
   in_frames: 1
   crop_h: 128
   crop_w: 256

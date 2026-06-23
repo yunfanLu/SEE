@@ -53,6 +53,8 @@ class SeeEverythingEveryTimePairedVideoDataset(Dataset):
         input_exposure_states,
         sample_step,
         single_output=True,
+        anchor_start=None,
+        event_window_frames=None,
     ):
         """
         group_folder: Folder containing the group
@@ -87,6 +89,8 @@ class SeeEverythingEveryTimePairedVideoDataset(Dataset):
         self.erpcfg = ev_rep_cfg
         self.sample_step = sample_step
         self.single_output = single_output
+        self.anchor_start = anchor_start
+        self.event_window_frames = event_window_frames
         # DVS 346 camera height and width
         self.H = 260
         self.W = 346
@@ -172,10 +176,21 @@ class SeeEverythingEveryTimePairedVideoDataset(Dataset):
         #
         items = []
         bias = self.in_frames_count // 2
-        for i in range(bias + 1, length - bias - 1, self.sample_step):
+        start = bias + 1 if self.anchor_start is None else self.anchor_start
+        for i in range(start, length - bias - 1, self.sample_step):
+            if i - bias - 1 < 0:
+                continue
             idxs = list(range(i - bias, i + bias + 1))
             # read more events
-            in_events = [self.inputs_event[i - bias - 1]] + [self.inputs_event[idx] for idx in idxs]
+            if self.event_window_frames is None:
+                in_events = [self.inputs_event[i - bias - 1]] + [self.inputs_event[idx] for idx in idxs]
+            else:
+                event_bias = self.event_window_frames // 2
+                event_start = i - event_bias
+                event_end = event_start + self.event_window_frames
+                if event_start < 0 or event_end > len(self.inputs_event):
+                    continue
+                in_events = [self.inputs_event[idx] for idx in range(event_start, event_end)]
             in_frames = [self.inputs_frame[idx] for idx in idxs]
             ou_frames = [self.outputs_frame[idx] for idx in idxs]
             # join the goup folder and video to full path.
@@ -216,7 +231,17 @@ class SeeEverythingEveryTimePairedVideoDataset(Dataset):
 
 
 def get_see_everything_everytime_with_event_dataset_for_each_group(
-    group_folder, in_frames, crop_h, crop_w, ev_rep_cfg, is_training, mapping_type, sample_step
+    group_folder,
+    in_frames,
+    crop_h,
+    crop_w,
+    ev_rep_cfg,
+    is_training,
+    mapping_type,
+    sample_step,
+    testing_anchor_start=None,
+    event_window_frames=None,
+    infer_exposure_state_from_brightness=False,
 ):
     def _get_dataset_by_in_out_video_name(input_video, normal_video, input_exposure_states):
         sample = SeeEverythingEveryTimePairedVideoDataset(
@@ -232,6 +257,8 @@ def get_see_everything_everytime_with_event_dataset_for_each_group(
             is_training,
             input_exposure_states=input_exposure_states,
             sample_step=sample_step,
+            anchor_start=None if is_training else testing_anchor_start,
+            event_window_frames=event_window_frames,
         )
         return sample
 
@@ -248,7 +275,9 @@ def get_see_everything_everytime_with_event_dataset_for_each_group(
         # timestamp is the first number of files
         frame_event_files = [[], []]
         for f in files:
-            timestamp = float(f.split("_")[0])
+            # New evaluation frames are named "<timestamp>.png", while the
+            # original dataset stores additional fields after the timestamp.
+            timestamp = float(splitext(f.split("_")[0])[0])
             if start_timestamp <= timestamp <= end_timestamp:
                 if "_vis" in f:  # events file
                     event_file_name = f.replace("_vis.png", ".npy")
@@ -257,8 +286,43 @@ def get_see_everything_everytime_with_event_dataset_for_each_group(
                     frame_event_files[0].append(f)
         video_to_frame_events[key] = frame_event_files
     # make the dataset from lowlight or highlight to normal light
-    with open(join(group_folder, "exposure_state.json"), "r") as f:
-        exposure_state = json.load(f)
+    exposure_state_path = join(group_folder, "exposure_state.json")
+    if exists(exposure_state_path):
+        with open(exposure_state_path, "r") as f:
+            exposure_state = json.load(f)
+    elif infer_exposure_state_from_brightness:
+        brightness = {}
+        for video_name, (frame_files, _) in video_to_frame_events.items():
+            if not frame_files:
+                continue
+            sample_count = min(10, len(frame_files))
+            sample_indices = np.linspace(0, len(frame_files) - 1, sample_count, dtype=int)
+            means = []
+            for index in sample_indices:
+                frame_path = join(group_folder, video_name, "frame_event", frame_files[index])
+                frame = cv2.imread(frame_path, cv2.IMREAD_COLOR)
+                if frame is not None:
+                    means.append(float(frame.mean()) / 255.0)
+            if means:
+                brightness[video_name] = float(np.mean(means))
+        if not brightness:
+            raise ValueError(f"Cannot infer exposure states: no readable frames in {group_folder}")
+        normal_video = max(brightness, key=brightness.get)
+        exposure_state = {
+            video_name: {
+                "exposure_state": "normal-light" if video_name == normal_video else "low-light"
+            }
+            for video_name in video_to_frame_events
+        }
+        warn(
+            f"Missing {exposure_state_path}; inferred normal-light video "
+            f"{normal_video} from mean brightness {brightness}"
+        )
+    else:
+        raise FileNotFoundError(
+            f"Missing required exposure metadata: {exposure_state_path}. "
+            "Set infer_exposure_state_from_brightness=true only for paired evaluation data."
+        )
     normal_video_list = []
     lowlight_video_list = []
     highlight_video_list = []
@@ -332,7 +396,18 @@ def get_see_everything_everytime_with_event_dataset_for_each_group(
 
 
 def get_see_everything_everytime_with_event_dataset_all(
-    root, in_frames, crop_h, crop_w, ev_rep_cfg, testing_mapping_type, training_mapping_type, sample_step
+    root,
+    in_frames,
+    crop_h,
+    crop_w,
+    ev_rep_cfg,
+    testing_mapping_type,
+    training_mapping_type,
+    sample_step,
+    testing_anchor_start=None,
+    event_window_frames=None,
+    all_groups_as_testing=False,
+    infer_exposure_state_from_brightness=False,
 ):
     all_train_dataset, all_test_dataset = [], []
     # video_all_folder = join(root, "VIDEOS-ALL")
@@ -342,7 +417,7 @@ def get_see_everything_everytime_with_event_dataset_all(
     for group in sorted(listdir(video_all_folder)):
         group_folder = join(video_all_folder, group)
         if isdir(group_folder):
-            if group in TESTING_GROUPS:
+            if all_groups_as_testing or group in TESTING_GROUPS:
                 dataset_in_one_group = get_see_everything_everytime_with_event_dataset_for_each_group(
                     group_folder,
                     in_frames,
@@ -352,6 +427,9 @@ def get_see_everything_everytime_with_event_dataset_all(
                     is_training=False,
                     mapping_type=testing_mapping_type,
                     sample_step=sample_step,
+                    testing_anchor_start=testing_anchor_start,
+                    event_window_frames=event_window_frames,
+                    infer_exposure_state_from_brightness=infer_exposure_state_from_brightness,
                 )
                 if len(dataset_in_one_group) == 0:
                     info(f"Empty Group (Testing) : {group_folder}")
@@ -367,6 +445,9 @@ def get_see_everything_everytime_with_event_dataset_all(
                     is_training=True,
                     mapping_type=training_mapping_type,
                     sample_step=sample_step,
+                    testing_anchor_start=testing_anchor_start,
+                    event_window_frames=event_window_frames,
+                    infer_exposure_state_from_brightness=infer_exposure_state_from_brightness,
                 )
                 if len(dataset_in_one_group) == 0:
                     debug(f"Empty Group (Training): {group_folder}")
@@ -374,7 +455,9 @@ def get_see_everything_everytime_with_event_dataset_all(
                 all_train_dataset.extend(dataset_in_one_group)
     info(f"all_test_dataset: {len(all_test_dataset)}")
     info(f"all_train_dataset: {len(all_train_dataset)}")
-    return ConcatDataset(all_train_dataset), ConcatDataset(all_test_dataset)
+    train_dataset = ConcatDataset(all_train_dataset) if all_train_dataset else []
+    test_dataset = ConcatDataset(all_test_dataset) if all_test_dataset else []
+    return train_dataset, test_dataset
 
 
 """

@@ -24,6 +24,10 @@ def get_dataset(config):
             testing_mapping_type=config.testing_mapping_type,
             training_mapping_type=config.training_mapping_type,
             sample_step=config.sample_step,
+            testing_anchor_start=getattr(config, "testing_anchor_start", None),
+            event_window_frames=getattr(config, "event_window_frames", None),
+            all_groups_as_testing=getattr(config, "all_groups_as_testing", False),
+            infer_exposure_state_from_brightness=getattr(config, "infer_exposure_state_from_brightness", False),
         )
     else:
         raise ValueError(f"Unknown dataset: {config.NAME}")
