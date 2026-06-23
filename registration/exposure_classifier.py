@@ -45,7 +45,7 @@ def exposure_classifier_for_each_group(GROUP_ROOT):
         for f in files:
             if "_vis" in f:
                 continue
-            timestamp = float(f.split("_")[0])
+            timestamp = float(f.split("_")[0]) if "_" in f else float(f.split(".")[0])
             if start_timestamp <= timestamp <= end_timestamp:
                 frame_path = join(frame_event_folder, f)
                 frame = cv2.imread(frame_path)

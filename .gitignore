@@ -192,4 +192,3 @@ tools/1-trained-model-inference/
 
 *.zip
 additional_data/DVS346-Robotic-Arm-Mirror
-additional_data/run.sh
