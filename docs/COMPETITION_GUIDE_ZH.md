@@ -299,6 +299,55 @@ zip -r submission.zip ./*
 3. 点击上传，选择 `submission.zip`
 4. 等待评测结果（验证集结果通常几分钟内返回）
 
+### 7.5 Eval Phase 测试提交流程
+
+Eval Phase 使用最终测试数据。提交前请先更新项目代码，并参考
+`options/SEE/SEENet_SEE_replicate.yaml` 修改测试配置，尤其需要确认：
+
+```yaml
+DATASET:
+  root: /path/to/SEE-600K-eval/DVS346-eval
+  crop_h: 260
+  crop_w: 346
+  all_groups_as_testing: true
+```
+
+`all_groups_as_testing: true` 表示将测试数据目录下的所有 group 都作为测试集，
+避免由于 group 名称不在训练代码内置 testing split 中而导致测试样本数为 0。
+
+运行测试脚本生成 `vis` 目录：
+
+```bash
+python see/main.py \
+  --yaml_file="options/SEE/SEENet_SEE_replicate.yaml" \
+  --log_dir="${eval_log_directory}" \
+  --alsologtostderr=True \
+  --RESUME_PATH="${checkpoint_path}" \
+  --TEST_ONLY=True \
+  --VISUALIZE=True \
+  --VAL_BATCH_SIZE=1
+```
+
+测试完成后，从生成的 `vis` 文件夹中收集需要提交的预测图像：
+
+```bash
+python codabench/collect_eval_phase_pred.py \
+  ${prediction_vis_directory} \
+  ${output_directory}
+```
+
+- `${prediction_vis_directory}`：测试脚本生成的 `vis` 文件夹
+- `${output_directory}`：收集后的提交目录
+
+最后打包并上传：
+
+```bash
+cd ${output_directory}
+zip -r submission.zip ./*
+```
+
+将 `submission.zip` 上传到 CodaBench 的 Eval Phase 页面即可。
+
 ---
 
 ## 八、比赛规则
