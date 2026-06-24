@@ -24,6 +24,18 @@ Recommended workflow:
 5. Collect prediction images with the provided CodaBench script.
 6. Zip the collected folder and upload it to CodaBench.
 
+## Eval Phase
+
+The Eval Phase uses the final test dataset:
+<https://drive.google.com/file/d/1-qQ_rKt5nB_8bb0kCZGhW_Epqkpi_I34/view?usp=drive_link>
+
+Before submitting to the Eval Phase, please update the repository and follow the Eval Phase workflow in [docs/CODABENCH_SUBMISSION_GUIDE.md](https://github.com/yunfanLu/SEE/blob/main/docs/CODABENCH_SUBMISSION_GUIDE.md#3-eval-phase-submission-workflow). In short:
+
+- run inference on the `SEE-600K-eval/DVS346-eval` test data at `346 x 260`;
+- set `all_groups_as_testing: true` in the testing dataset config;
+- collect predictions with `codabench/collect_eval_phase_pred.py`;
+- zip the collected folder and upload it to the CodaBench Eval Phase page.
+
 ## Task
 
 Given:

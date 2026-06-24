@@ -61,6 +61,8 @@ After the script finishes, the output directory contains the organized predictio
 
 ## 3. Eval Phase Submission Workflow
 
+Test dataset: https://drive.google.com/file/d/1-qQ_rKt5nB_8bb0kCZGhW_Epqkpi_I34/view?usp=drive_link
+
 The Eval Phase uses the final test data. Before submission, update the project code and modify the testing configuration with `options/SEE/SEENet_SEE_replicate.yaml` as the reference. In particular, make sure the dataset configuration includes:
 
 ```yaml
