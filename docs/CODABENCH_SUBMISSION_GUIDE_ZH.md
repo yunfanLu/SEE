@@ -59,7 +59,51 @@ python codabench/collect_codabench_pred.py /path/to/vis /path/to/output_dir --ov
 
 ***
 
-## 3. 打包提交文件
+## 3. Eval Phase 测试提交流程
+
+Eval Phase 使用最终测试数据。提交前请先更新项目代码，并参考 `options/SEE/SEENet_SEE_replicate.yaml` 修改测试配置，尤其需要确认：
+
+```yaml
+DATASET:
+  root: /path/to/SEE-600K-eval/DVS346-eval
+  crop_h: 260
+  crop_w: 346
+  all_groups_as_testing: true
+```
+
+`all_groups_as_testing: true` 表示将测试数据目录下的所有 group 都作为测试集，避免由于 group 名称不在训练代码内置 testing split 中而导致测试样本数为 0。
+
+运行测试脚本生成 `vis` 目录：
+
+```bash
+python see/main.py \
+  --yaml_file="options/SEE/SEENet_SEE_replicate.yaml" \
+  --log_dir="${eval_log_directory}" \
+  --alsologtostderr=True \
+  --RESUME_PATH="${checkpoint_path}" \
+  --TEST_ONLY=True \
+  --VISUALIZE=True \
+  --VAL_BATCH_SIZE=1
+```
+
+测试完成后，从生成的 `vis` 文件夹中收集需要提交的预测图像：
+
+```bash
+python codabench/collect_eval_phase_pred.py \
+  ${prediction_vis_directory} \
+  ${output_directory}
+```
+
+参数说明：
+
+- `${prediction_vis_directory}`：测试脚本生成的 `vis` 文件夹；
+- `${output_directory}`：收集后的提交目录。
+
+最后按照下一节打包，并上传到 CodaBench 的 Eval Phase 页面。
+
+***
+
+## 4. 打包提交文件
 
 将收集后的输出目录打包为 zip 文件：
 
@@ -77,7 +121,7 @@ zip -r submission.zip ./*
 
 ***
 
-## 4. 上传到 CodaBench
+## 5. 上传到 CodaBench
 
 1. 打开 CodaBench 比赛页面：<https://www.codabench.org/competitions/16195/>。
 2. 进入 **submission** 页面。
@@ -88,11 +132,14 @@ zip -r submission.zip ./*
 
 ***
 
-## 5. 流程总结
+## 6. 流程总结
 
 ```bash
 # 1. 收集用于提交的预测图像
 python codabench/collect_codabench_pred.py ${prediction_vis_directory} ${output_directory}
+
+# Eval Phase 使用专用收集脚本
+python codabench/collect_eval_phase_pred.py ${prediction_vis_directory} ${output_directory}
 
 # 2. 打包收集后的文件夹
 cd ${output_directory}
@@ -100,4 +147,3 @@ zip -r submission.zip ./*
 
 # 3. 在 CodaBench 上传 submission.zip
 ```
-
