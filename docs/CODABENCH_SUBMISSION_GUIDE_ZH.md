@@ -61,7 +61,7 @@ python codabench/collect_codabench_pred.py /path/to/vis /path/to/output_dir --ov
 
 ## 3. Eval Phase 测试提交流程
 
-测试数据集: https://drive.google.com/file/d/1-qQ_rKt5nB_8bb0kCZGhW_Epqkpi_I34/view?usp=drive_link
+测试数据集: https://drive.google.com/drive/folders/1pYYeaD3-2gIUweX1GnAJVPLXeb6Go8Xi?usp=drive_link
 
 Eval Phase 使用最终测试数据。提交前请先更新项目代码，并参考 `options/SEE/SEENet_SEE_replicate.yaml` 修改测试配置，尤其需要确认：
 

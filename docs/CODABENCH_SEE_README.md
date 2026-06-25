@@ -27,7 +27,7 @@ Recommended workflow:
 ## Eval Phase
 
 The Eval Phase uses the final test dataset:
-<https://drive.google.com/file/d/1-qQ_rKt5nB_8bb0kCZGhW_Epqkpi_I34/view?usp=drive_link>
+<https://drive.google.com/drive/folders/1pYYeaD3-2gIUweX1GnAJVPLXeb6Go8Xi?usp=drive_link>
 
 Before submitting to the Eval Phase, please update the repository and follow the Eval Phase workflow in [docs/CODABENCH_SUBMISSION_GUIDE.md](https://github.com/yunfanLu/SEE/blob/main/docs/CODABENCH_SUBMISSION_GUIDE.md#3-eval-phase-submission-workflow). In short:
 
