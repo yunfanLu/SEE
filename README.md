@@ -28,8 +28,8 @@
 The datasets supporting this project are publicly available:
 
 - **SEE-600K Dataset**
-  - [OneDrive](https://hkustgz-my.sharepoint.com/:f:/g/personal/ylu066_connect_hkust-gz_edu_cn/EkNi59p2uHJFjxyeQraiVhgBSs1GnxK4DyCUP-uZhEspCA?e=ZpwOvY)
-  - [Hugging Face](https://huggingface.co/datasets/yunfanlu/SEE-600K)
+  - [Hugging Face](https://huggingface.co/datasets/yunfanlu/SEE-600K) 
+  - [OneDrive](https://hkustgz-my.sharepoint.com/:f:/g/personal/ylu066_connect_hkust-gz_edu_cn/EkNi59p2uHJFjxyeQraiVhgBSs1GnxK4DyCUP-uZhEspCA?e=ZpwOvY) Since I have graduated, the OneDrive link will no longer be available.
 - **SDE Dataset**: [SDE Dataset GitHub](https://github.com/EthanLiang99/EvLight)
 
 ## Pretrained Models
